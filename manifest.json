@@ -1,0 +1,19 @@
+{
+  "name": "Task Tracker",
+  "short_name": "Task Tracker",
+  "description": "Премиальный автономный трекер задач с планированием на Неделю и Месяц в стиле Dark Glassmorphism",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#090b10",
+  "theme_color": "#090b10",
+  "orientation": "portrait-primary",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,1312 @@
+/* ==========================================================================
+   iOS Dark Glassmorphism Design System — Task Tracker PWA (Day/Week/Month)
+   ========================================================================== */
+
+:root {
+  /* Core Colors */
+  --bg-main: #090b10;
+  --bg-island: rgba(18, 22, 32, 0.78);
+  --bg-card: rgba(255, 255, 255, 0.045);
+  --bg-card-active: rgba(255, 255, 255, 0.08);
+  --bg-card-highlight: rgba(245, 158, 11, 0.08);
+  --bg-card-completed: rgba(16, 185, 129, 0.06);
+
+  /* Borders & Highlights */
+  --border-glass: rgba(255, 255, 255, 0.085);
+  --border-glass-glow: rgba(255, 255, 255, 0.18);
+  --border-amber: rgba(245, 158, 11, 0.4);
+  --border-emerald: rgba(16, 185, 129, 0.4);
+  --border-cyan: rgba(6, 182, 212, 0.4);
+
+  /* Typography Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+  --text-strikethrough: #475569;
+
+  /* Accent Palettes */
+  --accent-todo: #94a3b8;
+  --accent-todo-bg: rgba(148, 163, 184, 0.12);
+  --accent-progress: #f59e0b;
+  --accent-progress-glow: rgba(245, 158, 11, 0.35);
+  --accent-progress-bg: rgba(245, 158, 11, 0.14);
+  --accent-done: #10b981;
+  --accent-done-glow: rgba(16, 185, 129, 0.4);
+  --accent-done-bg: rgba(16, 185, 129, 0.14);
+  --accent-cyan: #06b6d4;
+  --accent-cyan-bg: rgba(6, 182, 212, 0.14);
+  --accent-danger: #f43f5e;
+  --accent-danger-bg: rgba(244, 63, 94, 0.14);
+
+  /* Shadows & Blurs */
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+  --island-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  --blur-strong: blur(28px) saturate(190%);
+  --blur-card: blur(20px) saturate(180%);
+
+  /* Animation Timings */
+  --spring-ease: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --smooth-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --bounce-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Safe Area Dimensions */
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+}
+
+/* ==========================================================================
+   Base & Reset
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  height: 100%;
+  overscroll-behavior-y: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: var(--bg-main);
+  display: flex;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Helper Text Classes */
+.text-amber { color: var(--accent-progress) !important; }
+.text-emerald { color: var(--accent-done) !important; }
+.text-cyan { color: var(--accent-cyan) !important; }
+
+/* ==========================================================================
+   Ambient Glowing Background Elements
+   ========================================================================== */
+
+.ambient-glow {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(80px);
+  opacity: 0.45;
+  transition: opacity 0.5s ease;
+}
+
+.ambient-glow-top {
+  top: -80px;
+  right: -50px;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, #3b82f6 0%, #06b6d4 50%, transparent 70%);
+}
+
+.ambient-glow-middle {
+  top: 35%;
+  left: -80px;
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, #f59e0b 0%, #d97706 40%, transparent 70%);
+  opacity: 0.25;
+}
+
+.ambient-glow-bottom {
+  bottom: 0px;
+  right: -60px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, #10b981 0%, #059669 40%, transparent 70%);
+  opacity: 0.28;
+}
+
+/* ==========================================================================
+   App Frame & Layout (Mobile First Container)
+   ========================================================================== */
+
+.app-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-top: max(12px, var(--sat));
+  padding-left: max(16px, var(--sal));
+  padding-right: max(16px, var(--sar));
+  padding-bottom: 0;
+}
+
+/* ==========================================================================
+   Header Section
+   ========================================================================== */
+
+.app-header {
+  flex-shrink: 0;
+  padding-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.date-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.date-day-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-progress);
+}
+
+.date-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.app-logo-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: 20px;
+  backdrop-filter: var(--blur-card);
+  -webkit-backdrop-filter: var(--blur-card);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.status-indicator-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--accent-done);
+  box-shadow: 0 0 8px var(--accent-done-glow);
+  animation: pulseDot 2.5s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* ==========================================================================
+   iOS Segmented Control (День | Неделя | Месяц)
+   ========================================================================== */
+
+.segmented-control {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  padding: 3px;
+  backdrop-filter: var(--blur-card);
+  -webkit-backdrop-filter: var(--blur-card);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.segment-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding: 7px 0;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: all 0.22s var(--smooth-ease);
+  position: relative;
+  text-align: center;
+}
+
+.segment-btn:active {
+  transform: scale(0.96);
+}
+
+.segment-btn.active {
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--text-primary);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+/* ==========================================================================
+   Horizon Date Navigation Bar
+   ========================================================================== */
+
+.horizon-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  padding: 6px 8px;
+  backdrop-filter: var(--blur-card);
+  -webkit-backdrop-filter: var(--blur-card);
+}
+
+.nav-arrow-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-arrow-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.nav-arrow-btn:active {
+  transform: scale(0.88);
+}
+
+.nav-current-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-label-text {
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.nav-today-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: var(--accent-progress-bg);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: var(--accent-progress);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-today-badge:hover {
+  background: rgba(245, 158, 11, 0.25);
+}
+
+.nav-today-badge:active {
+  transform: scale(0.92);
+}
+
+/* ==========================================================================
+   7-Day Interactive Week Strip (Week Horizon)
+   ========================================================================== */
+
+.week-strip-wrapper {
+  overflow-x: auto;
+  scrollbar-width: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.week-strip-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.week-strip {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+
+.day-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 2px 7px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s var(--smooth-ease);
+  position: relative;
+}
+
+.day-chip:active {
+  transform: scale(0.94);
+}
+
+.day-chip.active {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+.day-chip.is-today {
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+.day-chip-name {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: 2px;
+}
+
+.day-chip.active .day-chip-name {
+  color: var(--text-primary);
+}
+
+.day-chip-num {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.day-chip-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.day-chip-dot.dot-done {
+  background-color: var(--accent-done);
+  box-shadow: 0 0 6px var(--accent-done-glow);
+}
+
+.day-chip-dot.dot-progress {
+  background-color: var(--accent-progress);
+  box-shadow: 0 0 6px var(--accent-progress-glow);
+}
+
+.day-chip-dot.dot-todo {
+  background-color: var(--accent-todo);
+}
+
+/* ==========================================================================
+   Month Statistics Grid (Month Horizon)
+   ========================================================================== */
+
+.month-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  animation: fadeIn 0.3s ease;
+}
+
+.month-stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  backdrop-filter: var(--blur-card);
+  -webkit-backdrop-filter: var(--blur-card);
+}
+
+.month-stat-value {
+  font-size: 1.18rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.15;
+}
+
+.month-stat-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   Progress Overview Card
+   ========================================================================== */
+
+.progress-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: 16px;
+  padding: 12px 14px;
+  backdrop-filter: var(--blur-card);
+  -webkit-backdrop-filter: var(--blur-card);
+  box-shadow: var(--glass-shadow);
+  transition: border-color 0.3s ease;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.progress-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.progress-title {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.progress-stats {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.progress-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background: var(--accent-todo-bg);
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.3s ease;
+}
+
+.progress-badge.all-done {
+  background: var(--accent-done-bg);
+  color: var(--accent-done);
+  border-color: var(--border-emerald);
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #f59e0b 0%, #10b981 100%);
+  box-shadow: 0 0 12px var(--accent-done-glow);
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ==========================================================================
+   Filter Navigation Pills
+   ========================================================================== */
+
+.filter-nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.filter-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: var(--blur-card);
+  -webkit-backdrop-filter: var(--blur-card);
+  transition: all 0.2s var(--smooth-ease);
+  white-space: nowrap;
+}
+
+.filter-pill:active {
+  transform: scale(0.95);
+}
+
+.filter-pill.active {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: var(--text-primary);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.filter-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.filter-dot.amber {
+  background-color: var(--accent-progress);
+  box-shadow: 0 0 6px var(--accent-progress-glow);
+}
+
+.filter-dot.slate {
+  background-color: var(--accent-todo);
+}
+
+.filter-count {
+  font-size: 0.72rem;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+}
+
+.filter-pill.active .filter-count {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   Scrollable Tasks Feed
+   ========================================================================== */
+
+.tasks-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: calc(96px + var(--sab));
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.tasks-scroll-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.tasks-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  margin-bottom: 10px;
+  padding: 0 4px;
+}
+
+.section-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: -0.01em;
+}
+
+.section-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 2px 7px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Task List */
+.task-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+/* Group Day Sub-header in Week View */
+.week-group-header {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-cyan);
+  padding: 8px 4px 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.week-group-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================================================
+   Task Card Item (Glassmorphism + Spring Physics)
+   ========================================================================== */
+
+.task-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 13px 13px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: 16px;
+  backdrop-filter: var(--blur-card);
+  -webkit-backdrop-filter: var(--blur-card);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s var(--smooth-ease), 
+              background-color 0.3s ease, 
+              border-color 0.3s ease, 
+              box-shadow 0.3s ease, 
+              opacity 0.35s ease;
+  animation: springCardIn 0.4s var(--spring-ease) both;
+  touch-action: pan-y;
+  cursor: default;
+}
+
+.task-card:active {
+  background: var(--bg-card-active);
+}
+
+@keyframes springCardIn {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Card States */
+.task-card.status-in_progress {
+  border-color: var(--border-amber);
+  background: var(--bg-card-highlight);
+  box-shadow: 0 4px 24px rgba(245, 158, 11, 0.15);
+}
+
+.task-card.status-done {
+  border-color: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.02);
+  opacity: 0.72;
+}
+
+/* Completion Flash Celebration Animation */
+.task-card.celebrating {
+  animation: celebrationFlash 0.85s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes celebrationFlash {
+  0% {
+    transform: scale(1);
+    background: rgba(16, 185, 129, 0.35);
+    border-color: var(--accent-done);
+    box-shadow: 0 0 30px var(--accent-done-glow);
+  }
+  40% {
+    transform: scale(1.02);
+    background: rgba(16, 185, 129, 0.2);
+  }
+  100% {
+    transform: scale(0.96);
+    opacity: 0.2;
+  }
+}
+
+/* Task Departing to Completed Section */
+.task-card.departing {
+  animation: taskDepart 0.4s var(--smooth-ease) forwards;
+}
+
+@keyframes taskDepart {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.98);
+    max-height: 80px;
+    margin-bottom: 9px;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.85);
+    max-height: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-width: 0;
+  }
+}
+
+/* ==========================================================================
+   3-State Status Toggle Button
+   ========================================================================== */
+
+.status-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s var(--bounce-ease);
+}
+
+.status-btn:active {
+  transform: scale(0.85);
+}
+
+/* State 1: Todo (Hollow Silver Circle) */
+.status-btn .status-icon-todo {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.04);
+  transition: all 0.2s ease;
+}
+
+.status-btn:hover .status-icon-todo {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* State 2: In Progress (Warm Amber Pulsing Ring) */
+.status-btn .status-icon-progress {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2.5px solid var(--accent-progress);
+  border-top-color: transparent;
+  position: relative;
+  animation: spinProgress 3s linear infinite;
+  box-shadow: 0 0 10px var(--accent-progress-glow);
+}
+
+.status-btn .status-icon-progress::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-progress);
+  box-shadow: 0 0 6px var(--accent-progress);
+}
+
+@keyframes spinProgress {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* State 3: Done (Emerald Checkmark) */
+.status-btn .status-icon-done {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent-done);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 12px var(--accent-done-glow);
+  animation: popDone 0.3s var(--bounce-ease);
+}
+
+.status-btn .status-icon-done svg {
+  width: 14px;
+  height: 14px;
+  color: #090b10;
+  stroke-width: 3.5;
+}
+
+@keyframes popDone {
+  0% { transform: scale(0.4); opacity: 0; }
+  70% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Task Content Info */
+.task-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.task-text {
+  font-size: 0.96rem;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--text-primary);
+  word-break: break-word;
+  transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.task-card.status-done .task-text {
+  color: var(--text-strikethrough);
+  text-decoration: line-through;
+}
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+}
+
+.task-status-pill {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.task-status-pill.todo {
+  background: var(--accent-todo-bg);
+  color: var(--accent-todo);
+}
+
+.task-status-pill.in_progress {
+  background: var(--accent-progress-bg);
+  color: var(--accent-progress);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.task-status-pill.done {
+  background: var(--accent-done-bg);
+  color: var(--accent-done);
+}
+
+.task-type-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-tertiary);
+}
+
+/* Task Action Buttons */
+.task-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.task-delete-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+}
+
+.task-delete-btn:hover {
+  opacity: 1;
+  color: var(--accent-danger);
+  background: var(--accent-danger-bg);
+}
+
+.task-delete-btn:active {
+  transform: scale(0.9);
+}
+
+/* ==========================================================================
+   Completed Tasks Accordion Section
+   ========================================================================== */
+
+.completed-section {
+  margin-top: 18px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 6px;
+  border-radius: 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.accordion-header:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.accordion-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.accordion-chevron {
+  width: 16px;
+  height: 16px;
+  color: var(--text-tertiary);
+  transition: transform 0.3s var(--smooth-ease);
+}
+
+.accordion-header.expanded .accordion-chevron {
+  transform: rotate(90deg);
+}
+
+.accordion-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.completed-pill-count {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: var(--accent-done-bg);
+  color: var(--accent-done);
+}
+
+.clear-completed-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: 1px solid rgba(244, 63, 94, 0.2);
+  color: var(--accent-danger);
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-completed-btn:hover {
+  background: var(--accent-danger-bg);
+  border-color: var(--accent-danger);
+}
+
+.clear-completed-btn:active {
+  transform: scale(0.92);
+}
+
+.accordion-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s var(--smooth-ease), opacity 0.3s ease;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.accordion-content.expanded {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  margin-top: 10px;
+}
+
+.accordion-content .task-list {
+  min-height: 0;
+}
+
+/* ==========================================================================
+   Empty State
+   ========================================================================== */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  animation: fadeIn 0.4s ease;
+}
+
+.empty-icon-wrap {
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  backdrop-filter: var(--blur-card);
+}
+
+.empty-icon {
+  width: 30px;
+  height: 30px;
+  color: var(--accent-done);
+  opacity: 0.85;
+}
+
+.empty-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 5px;
+}
+
+.empty-subtitle {
+  font-size: 0.84rem;
+  color: var(--text-tertiary);
+  max-width: 260px;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   Bottom Floating Island Input Bar (Dynamic Island style)
+   ========================================================================== */
+
+.floating-island-wrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  padding-left: max(16px, var(--sal));
+  padding-right: max(16px, var(--sar));
+  padding-bottom: max(16px, var(--sab));
+  pointer-events: none;
+}
+
+.dynamic-island-bar {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px 8px 18px;
+  background: var(--bg-island);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 36px;
+  backdrop-filter: var(--blur-strong);
+  -webkit-backdrop-filter: var(--blur-strong);
+  box-shadow: var(--island-shadow);
+  transition: transform 0.3s var(--bounce-ease), border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dynamic-island-bar:focus-within {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.8), 0 0 20px rgba(6, 182, 212, 0.2);
+  transform: translateY(-2px);
+}
+
+.island-input-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.island-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  /* 17px to strictly prevent iOS Safari auto-zoom on focus */
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.island-input::placeholder {
+  color: var(--text-tertiary);
+  font-weight: 400;
+}
+
+.island-submit-btn {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+  transition: transform 0.2s var(--bounce-ease), box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.island-submit-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.5);
+}
+
+.island-submit-btn:active {
+  transform: scale(0.92);
+}
+
+.island-submit-btn .plus-icon {
+  width: 22px;
+  height: 22px;
+}
+
+/* ==========================================================================
+   Toast Notification
+   ========================================================================== */
+
+.toast-container {
+  position: fixed;
+  top: max(16px, var(--sat));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  width: calc(100% - 32px);
+  max-width: 360px;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: rgba(22, 27, 39, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  backdrop-filter: var(--blur-strong);
+  -webkit-backdrop-filter: var(--blur-strong);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  animation: toastSlideDown 0.35s var(--bounce-ease) both;
+}
+
+.toast.toast-exit {
+  animation: toastSlideUp 0.3s var(--smooth-ease) forwards;
+}
+
+.toast-undo-btn {
+  background: transparent;
+  border: none;
+  color: var(--accent-progress);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 6px;
+}
+
+@keyframes toastSlideDown {
+  0% { opacity: 0; transform: translateY(-20px) scale(0.92); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes toastSlideUp {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-16px) scale(0.9); }
+}
+
+/* Utilities */
+.hidden {
+  display: none !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Desktop Polish */
+@media (min-width: 600px) {
+  .app-container {
+    padding-top: 24px;
+  }
+}
